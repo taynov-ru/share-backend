@@ -1,0 +1,165 @@
+swagger: '2.0'
+info:
+  title: Share
+  version: ''
+paths:
+  /v1/files/upload:
+    post:
+      summary: Загрузка файла
+      operationId: upload-file
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: file
+          in: formData
+          description: Любой файл
+          required: true
+          type: file
+      responses:
+        '200':
+          $ref: '#/responses/FileResponse'
+        '400':
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/Error'
+  /v1/files/publish:
+    post:
+      summary: Публикация файла
+      operationId: publish-file
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/FilePublishRequest'
+      responses:
+        '200':
+          $ref: '#/responses/FilePublishResponse'
+        '400':
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/Error'
+  /v1/files/download:
+    get:
+      summary: Скачивание файла
+      operationId: download-file
+      responses:
+        '200':
+          $ref: '#/responses/FileDownloadResponse'
+definitions:
+  FilePublishRequest:
+    type: object
+    properties:
+      fileIds:
+        type: array
+        description: Список ID публикуемых файлов
+        items:
+          type: string
+          format: uuid
+      fileDetails:
+        $ref: '#/definitions/FileDetails'
+    required:
+      - fileIds
+      - fileDetails
+  UploadedFile:
+    type: object
+    properties:
+      fileId:
+        type: string
+        format: uuid
+        description: ID загруженного файла
+      fileName:
+        type: string
+        description: Имя загруженного файла
+    required:
+      - fileId
+      - fileName
+  FileDetails:
+    type: object
+    properties:
+      downloadLimit:
+        type: integer
+        description: >-
+          Возможное количество скачиваний файла. Если передан 0 - без
+          ограничений
+        default: 0
+      expirationTime:
+        type: number
+        description: Время хранения файла
+        default: 604800
+      password:
+        type: string
+        description: Пароль для доступа к файлу
+      link:
+        type: string
+        description: Ссылка на файл
+    required:
+      - downloadLimit
+      - expirationTime
+      - link
+  DownloadedFiles:
+    type: object
+    properties:
+      fileName:
+        type: string
+        description: Имя файла
+      fileSize:
+        type: string
+        description: Размер файла
+      linkToDownload:
+        type: string
+        description: Ссылка на загрузку
+      downloadsLeft:
+        type: integer
+        description: Оставшееся количество загрузок
+    required:
+      - fileName
+      - fileSize
+      - linkToDownload
+  Error:
+    type: object
+    properties:
+      code:
+        type: string
+        description: Код ошибки
+      message:
+        type: string
+        description: Текст ошибки
+  FilePublishResponseData:
+    type: object
+    properties:
+      link:
+        type: string
+        description: Ссылка на скачивание
+    required:
+      - link
+  FileDownloadResponseData:
+    type: object
+    properties:
+      link:
+        type: string
+        description: Ссылка на файл
+      uploadDate:
+        type: string
+        description: Дата загрузки файла
+      expirationDate:
+        type: string
+        description: Дата, до которой будет храниться файл
+      downloads:
+        type: integer
+        description: Количество загрузок
+      downloadedFiles:
+        $ref: '#/definitions/DownloadedFiles'
+responses:
+  FileResponse:
+    description: FileResponse
+    schema:
+      $ref: '#/definitions/UploadedFile'
+  FilePublishResponse:
+    description: FilePublishResponse
+    schema:
+      $ref: '#/definitions/FilePublishResponseData'
+  FileDownloadResponse:
+    description: FileDownloadResponse
+    schema:
+      $ref: '#/definitions/FileDownloadResponseData'
