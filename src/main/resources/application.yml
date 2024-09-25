@@ -1,1 +1,29 @@
-spring.application.name=share
+spring:
+  application:
+    name: share
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+  liquibase:
+    change-log: classpath:db/changelog/changelog.yaml
+minio:
+  bucket: share
+  url: http://localhost:9000
+  username: minio
+  password: minio_pass
+logbook:
+  format:
+    style: json
+  predicate:
+    exclude:
+      - path: /actuator/**
+logging:
+  level:
+    org.zalando.logbook: TRACE

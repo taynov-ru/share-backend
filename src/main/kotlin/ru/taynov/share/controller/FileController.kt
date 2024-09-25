@@ -1,4 +1,4 @@
-package ru.taynov.share
+package ru.taynov.share.controller
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
@@ -10,7 +10,7 @@ import ru.taynov.swagger.model.FilePublishResponseDataGen
 import ru.taynov.swagger.model.UploadedFileGen
 
 @RestController
-class Controller: DefaultApi {
+class FileController: DefaultApi {
     override fun downloadFile(): ResponseEntity<FileDownloadResponseDataGen> {
         TODO("Not yet implemented")
     }
