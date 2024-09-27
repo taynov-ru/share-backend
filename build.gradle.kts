@@ -4,7 +4,7 @@ plugins {
 	id("org.springframework.boot") version "3.3.3"
 	id("io.spring.dependency-management") version "1.1.6"
 	kotlin("plugin.jpa") version "1.9.25"
-	id("org.openapi.generator") version "5.2.0"
+	id("org.openapi.generator") version "5.2.1"
 }
 
 group = "ru.taynov"
@@ -19,8 +19,6 @@ java {
 repositories {
 	mavenCentral()
 }
-
-apply(plugin = "org.openapi.generator")
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
@@ -46,6 +44,7 @@ dependencies {
 	implementation ("org.apache.commons:commons-lang3:3.13.0")
 	implementation ("org.hibernate.orm:hibernate-core:6.6.0.Final")
 	implementation("org.hibernate.common:hibernate-commons-annotations:6.0.6.Final")
+	implementation("javax.servlet:javax.servlet-api:4.0.1")
 }
 
 kotlin {
@@ -61,7 +60,7 @@ kotlin {
 		"interfaceOnly" to "true",
 		"hideGenerationTimestamp" to "true",
 		"useTags" to "true",
-		"library" to "spring-cloud"
+		"library" to "spring-cloud",
 	)
 
 tasks.withType<Test> {
@@ -71,17 +70,18 @@ tasks.withType<Test> {
 sourceSets {
 	main {
 		java {
-			srcDir ("${buildDir.absolutePath}/generated/src/main/java")
+			srcDir ("${buildDir.absolutePath}/generated/src/main/kotlin")
 		}
 	}
 }
 
 tasks.register<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>("generateClient") {
-	generatorName = "spring"
-	inputSpec.set("$projectDir/src/main/resources/swagger.yaml")
+	generatorName = "kotlin-spring"
+	inputSpec.set("$projectDir/src/main/resources/openapi.yaml")
 	outputDir.set("$buildDir/generated")
-	apiPackage.set("ru.taynov.swagger.client")
-	modelPackage.set("ru.taynov.swagger.model")
+	apiPackage.set("ru.taynov.openapi.client")
+	modelPackage.set("ru.taynov.openapi.model")
+	templateDir.set("$projectDir/src/main/resources/templates")
 	configOptions.set(openApiConfigOptions)
 	modelNameSuffix.set("Gen")
 }

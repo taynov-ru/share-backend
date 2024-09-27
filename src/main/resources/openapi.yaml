@@ -1,0 +1,175 @@
+openapi: 3.0.1
+info:
+  title: Share
+  version: ""
+servers:
+- url: /
+paths:
+  /files/publish:
+    post:
+      summary: Публикация файла
+      operationId: publish-file
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/FilePublishRequest'
+        required: true
+      responses:
+        "200":
+          description: FilePublishResponse
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/FilePublishResponseData'
+        "400":
+          description: Ошибка
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-codegen-request-body-name: body
+  /files/download:
+    get:
+      summary: Скачивание файла
+      operationId: download-file
+      responses:
+        "200":
+          description: FileDownloadResponse
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/FileDownloadResponseData'
+  /files/delete/{id}:
+    delete:
+      summary: Удаление загруженного файла
+      operationId: delete-file
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Идентификатор файла
+      responses:
+        "200":
+          description: "Файл удален"
+  /publication/delete/{id}:
+    delete:
+      summary: Удаление публикации
+      operationId: delete-publication
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Идентификатор публикации
+      responses:
+        "200":
+          description: "Публикация удалена"
+components:
+  schemas:
+    FilePublishRequest:
+      required:
+      - fileDetails
+      - fileIds
+      type: object
+      properties:
+        fileIds:
+          type: array
+          description: Список ID публикуемых файлов
+          items:
+            type: string
+            format: uuid
+        fileDetails:
+          $ref: '#/components/schemas/FileDetails'
+    FileDetails:
+      required:
+      - downloadLimit
+      - expirationTime
+      - link
+      type: object
+      properties:
+        downloadLimit:
+          type: integer
+          description: Возможное количество скачиваний файла. Если передан 0 - без
+            ограничений
+        expirationTime:
+          type: number
+          description: Время хранения файла
+        password:
+          type: string
+          description: Пароль для доступа к файлу
+        link:
+          type: string
+          description: Ссылка на файл
+    DownloadedFiles:
+      required:
+      - fileName
+      - fileSize
+      - linkToDownload
+      type: object
+      properties:
+        fileName:
+          type: string
+          description: Имя файла
+        fileSize:
+          type: string
+          description: Размер файла
+        linkToDownload:
+          type: string
+          description: Ссылка на загрузку
+        downloadsCount:
+          type: integer
+          description: Текущее количество скачиваний файла
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Код ошибки
+        message:
+          type: string
+          description: Текст ошибки
+    FilePublishResponseData:
+      required:
+      - link
+      type: object
+      properties:
+        link:
+          type: string
+          description: Ссылка на скачивание
+    FileDownloadResponseData:
+      type: object
+      properties:
+        link:
+          type: string
+          description: Ссылка на файл
+        uploadDate:
+          type: string
+          description: Дата загрузки файла
+        expirationDate:
+          type: string
+          description: "Дата, до которой будет храниться файл"
+        downloads:
+          type: integer
+          description: Количество загрузок
+        downloadedFiles:
+          $ref: '#/components/schemas/DownloadedFiles'
+  responses:
+    FilePublishResponse:
+      description: FilePublishResponse
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/FilePublishResponseData'
+    FileDownloadResponse:
+      description: FileDownloadResponse
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/FileDownloadResponseData'
+x-original-swagger-version: "2.0"

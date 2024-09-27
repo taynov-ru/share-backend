@@ -24,8 +24,6 @@ data class FileDetailsEntity (
     val password: String,
     @Column(name = "link")
     val link: String,
-    @Column(name = "deleted")
-    val deleted: Boolean,
 
     @OneToOne
     @JoinColumn(name = "file_id", referencedColumnName = "id", insertable = false, updatable = false)

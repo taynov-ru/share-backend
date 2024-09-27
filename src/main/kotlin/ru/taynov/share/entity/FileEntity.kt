@@ -18,19 +18,19 @@ data class FileEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "file_uuid", unique = true)
-    val fileUuid: UUID,
+    val fileUuid: UUID? = null,
     @Column(name = "file_name")
     val fileName: String,
     @Column(name = "size")
     val size: Long,
-    @Column(name = "publication_id")
-    val publicationId: UUID,
+    @Column(name = "deleted")
+    val deleted: Boolean = false,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publication_id", referencedColumnName = "id", insertable = false, updatable = false)
-    val publication: PublicationEntity,
+    val publication: PublicationEntity? = null,
 
     @OneToOne(mappedBy = "uploadedFileId", fetch = FetchType.LAZY)
-    val fileDetails: FileDetailsEntity
+    val fileDetails: FileDetailsEntity? = null
 
 )
