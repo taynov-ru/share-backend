@@ -31,7 +31,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: Package
-          path: share-backend/build/libs
+          path: build/libs
 
   build-docker:
 #    runs-on: arc-runner-set # uses self-hosted runner scale set
