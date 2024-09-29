@@ -81,7 +81,6 @@ tasks.register<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>("gen
 	outputDir.set("$buildDir/generated")
 	apiPackage.set("ru.taynov.openapi.client")
 	modelPackage.set("ru.taynov.openapi.model")
-	templateDir.set("$projectDir/src/main/resources/templates")
 	configOptions.set(openApiConfigOptions)
 	modelNameSuffix.set("Gen")
 }
