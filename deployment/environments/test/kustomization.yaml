@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
 - ../../base
+- cm-app.yaml
 
 namespace: share-test
 

@@ -1,6 +1,6 @@
 FROM eclipse-temurin:21-jdk-alpine
 LABEL name="share-backend"
-EXPOSE 80
+EXPOSE 8080
 
 WORKDIR /app
 

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+name: backend-application-config
+data:
+  application.yml: |
+    spring:
+      datasource:
+        url: jdbc:postgresql://postgres-service.share-test:5432/postgres
+        username: postgres
+        password: postgres

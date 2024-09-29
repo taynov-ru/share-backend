@@ -25,5 +25,12 @@ spec:
           ports:
             - containerPort: 8080
               protocol: TCP
+          volumeMounts:
+            - name: spring-application-config
+              mountPath: /app/config
+      volumes:
+        - name: spring-application-config
+          configMap:
+            backend-application-config
       restartPolicy: Always
       
