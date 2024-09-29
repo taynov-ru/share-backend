@@ -88,3 +88,7 @@ tasks.register<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>("gen
 tasks.compileKotlin {
 	dependsOn("generateClient")
 }
+
+tasks.jar {
+	enabled = false
+}
