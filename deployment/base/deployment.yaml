@@ -3,12 +3,12 @@ kind: Deployment
 metadata:
   name: share-backend
   labels:
-    app: share-backend
+    app: share-backend-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: share-backend
+      app: share-backend-app
   template:
     metadata:
       name: share-backend-app
@@ -31,6 +31,6 @@ spec:
       volumes:
         - name: spring-application-config
           configMap:
-            backend-application-config
+            name: backend-application-config
       restartPolicy: Always
       

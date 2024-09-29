@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-name: backend-application-config
+  name: backend-application-config
 data:
   application.yml: |
     spring:
