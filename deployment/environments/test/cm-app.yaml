@@ -7,5 +7,5 @@ data:
     spring:
       datasource:
         url: jdbc:postgresql://postgres-service.share-test:5432/postgres
-        username: postgres
-        password: postgres
+        username: ${POSTGRES_USER}
+        password: ${POSTGRES_PASSWORD}

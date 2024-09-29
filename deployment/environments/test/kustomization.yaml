@@ -16,6 +16,13 @@ configMapGenerator:
   - INGRESS_ENDPOINT=share-backend-test.test-k8s.taynov.ru
   name: share-backend-env-config
 
+secretGenerator:
+  - behavior: create
+    name: share-backend-secret
+    literals:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
 replacements:
 - source:
     fieldPath: data.INGRESS_ENDPOINT
