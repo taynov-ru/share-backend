@@ -15,13 +15,6 @@ configMapGenerator:
   - INGRESS_ENDPOINT=share-backend-test.test-k8s.taynov.ru
   name: share-backend-env-config
 
-secretGenerator:
-  - name: hubdocker
-    type: kubernetes.io/dockerconfigjson
-    files:
-      - .dockerconfigjson=credentials.json
-
-
 replacements:
 - source:
     fieldPath: data.INGRESS_ENDPOINT
