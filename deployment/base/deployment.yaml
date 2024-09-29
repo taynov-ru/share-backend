@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: share-backend
+  labels:
+    app: share-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: share-backend
+  template:
+    metadata:
+      name: share-backend-app
+      labels:
+        app: share-backend-app
+    spec:
+      containers:
+        - name: share-backend
+          image: share-backend-image
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: share-backend-secret
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+      restartPolicy: Always
+      

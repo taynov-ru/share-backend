@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: share-backend
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-cluster
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - $(INGRESS_ENDPOINT)
+      secretName: share-backend-tls
+  rules:
+    - host: $(INGRESS_ENDPOINT)
+      http:
+        paths:
+          - pathType: ImplementationSpecific
+            backend:
+              service:
+                name: share-backend
+                port:
+                  number: 80
