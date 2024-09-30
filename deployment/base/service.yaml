@@ -4,7 +4,7 @@ metadata:
   name: share-backend
 spec:
   selector:
-    app: share-backend
+    app: share-backend-app
   ports:
     - protocol: TCP
       port: 80
