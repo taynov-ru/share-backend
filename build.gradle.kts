@@ -4,7 +4,7 @@ plugins {
 	id("org.springframework.boot") version "3.3.3"
 	id("io.spring.dependency-management") version "1.1.6"
 	kotlin("plugin.jpa") version "1.9.25"
-	id("org.openapi.generator") version "5.2.1"
+	id("org.openapi.generator") version "7.8.0"
 }
 
 group = "ru.taynov"
@@ -18,6 +18,7 @@ java {
 
 repositories {
 	mavenCentral()
+	mavenLocal()
 }
 
 dependencies {
@@ -26,17 +27,20 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("net.logstash.logback:logstash-logback-encoder:7.2")
 	implementation("org.zalando:logbook-spring-boot-starter:3.7.2")
-	implementation("org.zalando:logbook-servlet:3.7.2:javax")
+	implementation("org.zalando:logbook-servlet:3.7.2")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.security:spring-security-config")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	compileOnly ("org.openapitools:jackson-databind-nullable:0.2.1")
-	compileOnly("io.swagger:swagger-annotations:1.6.3")
+	compileOnly("io.swagger.core.v3:swagger-annotations:2.2.10")
 	compileOnly("io.springfox:springfox-core:3.0.0")
-	compileOnly ("javax.validation:validation-api:2.0.1.Final")
-	compileOnly("javax.annotation:javax.annotation-api:1.3.2")
+	implementation("io.springfox:springfox-boot-starter:3.0.0")
+	implementation("io.springfox:springfox-swagger2:3.0.0")
+	implementation("io.springfox:springfox-swagger-ui:3.0.0")
+	compileOnly("jakarta.validation:jakarta.validation-api:3.0.2")
+	compileOnly("jakarta.annotation:jakarta.annotation-api:2.1.1")
 	runtimeOnly ("org.postgresql:postgresql:42.7.2")
 	implementation ("org.springframework.boot:spring-boot-starter-data-jpa:2.7.0")
 	implementation("org.liquibase:liquibase-core:4.26.0")
@@ -44,7 +48,7 @@ dependencies {
 	implementation ("org.apache.commons:commons-lang3:3.13.0")
 	implementation ("org.hibernate.orm:hibernate-core:6.6.0.Final")
 	implementation("org.hibernate.common:hibernate-commons-annotations:6.0.6.Final")
-	implementation("javax.servlet:javax.servlet-api:4.0.1")
+	implementation("jakarta.servlet:jakarta.servlet-api:6.0.0")
 }
 
 kotlin {
@@ -60,7 +64,7 @@ kotlin {
 		"interfaceOnly" to "true",
 		"hideGenerationTimestamp" to "true",
 		"useTags" to "true",
-		"library" to "spring-cloud",
+		"library" to "spring-boot",
 	)
 
 tasks.withType<Test> {
@@ -81,7 +85,12 @@ tasks.register<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>("gen
 	outputDir.set("$buildDir/generated")
 	apiPackage.set("ru.taynov.openapi.client")
 	modelPackage.set("ru.taynov.openapi.model")
-	configOptions.set(openApiConfigOptions)
+	configOptions.set(
+		openApiConfigOptions + mapOf(
+			"useJakartaEe" to "true",
+			"useSpringBoot3" to "true",
+		)
+	)
 	modelNameSuffix.set("Gen")
 }
 

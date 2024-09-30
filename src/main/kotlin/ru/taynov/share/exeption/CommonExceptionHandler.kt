@@ -1,5 +1,7 @@
 package ru.taynov.share.exeption
 
+import jakarta.validation.ConstraintViolationException
+import jakarta.validation.ValidationException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -12,8 +14,6 @@ import ru.taynov.share.utils.INTERNAL_SERVER_ERROR
 import ru.taynov.share.utils.INVALID_PARAMETERS
 import ru.taynov.share.utils.METHOD_ARGUMENT_NOT_VALID_ERROR
 import ru.taynov.share.utils.VALIDATION_ERROR
-import javax.validation.ConstraintViolationException
-import javax.validation.ValidationException
 
 @ControllerAdvice
 class CommonExceptionHandler {
