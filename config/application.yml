@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+minio:
+  url: http://localhost:9000
+  username: minio
+  password: minio_pass

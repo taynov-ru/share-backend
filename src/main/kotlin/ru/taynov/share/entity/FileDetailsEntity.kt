@@ -2,8 +2,13 @@ package ru.taynov.share.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.MapsId
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import java.util.UUID
@@ -13,19 +18,23 @@ import java.util.UUID
 data class FileDetailsEntity (
     @Id
     @Column(name = "file_id")
-    val fileId: UUID,
+    @GeneratedValue(strategy = GenerationType.UUID)
+    val fileId: UUID? = null,
     @Column(name = "downloads_limit")
     val downloadsLimit: Int,
     @Column(name = "downloads_count")
-    val downloadsCount: Int,
+    val downloadsCount: Int = 0,
     @Column(name = "expiration_time")
     val expirationTime: Long,
     @Column(name = "password")
     val password: String,
-    @Column(name = "link")
-    val link: String,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "publication_id", referencedColumnName = "id")
+    var publication: PublicationEntity? = null,
 
     @OneToOne
-    @JoinColumn(name = "file_id", referencedColumnName = "id", insertable = false, updatable = false)
-    val uploadedFileId: FileEntity
+    @MapsId
+    @JoinColumn(name = "file_id")
+    val uploadedFileId: FileEntity? = null
 )

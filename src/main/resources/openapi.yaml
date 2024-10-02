@@ -29,17 +29,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       x-codegen-request-body-name: body
-  /files/download:
+  /publication/{id}:
     get:
-      summary: Скачивание файла
-      operationId: download-file
+      summary: Получение публикации
+      operationId: get-publication
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Идентификатор публикации
       responses:
         "200":
-          description: FileDownloadResponse
+          description: GetPublicationResponse
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/FileDownloadResponseData'
+                $ref: '#/components/schemas/GetPublicationResponseData'
   /files/delete/{id}:
     delete:
       summary: Удаление загруженного файла
@@ -113,18 +121,23 @@ components:
       - linkToDownload
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
+          description: ID файла
         fileName:
           type: string
           description: Имя файла
         fileSize:
-          type: string
+          type: number
+          format: long
           description: Размер файла
-        linkToDownload:
-          type: string
-          description: Ссылка на загрузку
         downloadsCount:
           type: integer
           description: Текущее количество скачиваний файла
+        downloadsLeft:
+          type: integer
+          description: Оставшее количество возможных скачиваний файла
     Error:
       type: object
       properties:
@@ -142,7 +155,7 @@ components:
         link:
           type: string
           description: Ссылка на скачивание
-    FileDownloadResponseData:
+    GetPublicationResponseData:
       type: object
       properties:
         link:
@@ -154,11 +167,10 @@ components:
         expirationDate:
           type: string
           description: "Дата, до которой будет храниться файл"
-        downloads:
-          type: integer
-          description: Количество загрузок
         downloadedFiles:
-          $ref: '#/components/schemas/DownloadedFiles'
+          type: array
+          items:
+            $ref: '#/components/schemas/DownloadedFiles'
   responses:
     FilePublishResponse:
       description: FilePublishResponse
@@ -166,10 +178,10 @@ components:
         'application/json':
           schema:
             $ref: '#/components/schemas/FilePublishResponseData'
-    FileDownloadResponse:
-      description: FileDownloadResponse
+    GetPublicationResponse:
+      description: GetPublicationResponse
       content:
         'application/json':
           schema:
-            $ref: '#/components/schemas/FileDownloadResponseData'
+            $ref: '#/components/schemas/GetPublicationResponseData'
 x-original-swagger-version: "2.0"
