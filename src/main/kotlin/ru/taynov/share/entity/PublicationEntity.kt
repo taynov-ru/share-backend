@@ -1,5 +1,6 @@
 package ru.taynov.share.entity
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -16,14 +17,17 @@ import java.util.UUID
 data class PublicationEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    val id: UUID,
+    @Column(name = "id")
+    val id: UUID? = null,
     @Column(name = "publish_date")
     val publishDate: LocalDateTime,
     @Column(name = "expiration_date")
     val expirationDate: LocalDateTime,
+    @Column(name = "download_link")
+    val downloadLink: String,
     @Column(name = "deleted")
     val deleted: Boolean = false,
 
-    @OneToMany(mappedBy = "publication", fetch = FetchType.LAZY)
-    val files: List<FileEntity>
+    @OneToMany(mappedBy = "publication", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    val files: List<FileDetailsEntity> = emptyList()
 )

@@ -1,8 +1,9 @@
 CREATE TABLE IF NOT EXISTS publications
 (
     id UUID PRIMARY KEY,
-    publish_date TIMESTAMP WITH TIME ZONE,
-    expiration_date TIMESTAMP WITH TIME ZONE,
+    publish_date TIMESTAMP WITHOUT TIME ZONE,
+    expiration_date TIMESTAMP WITHOUT TIME ZONE,
+    download_link VARCHAR(255),
     deleted BOOLEAN DEFAULT FALSE
 );
 
@@ -11,8 +12,7 @@ CREATE TABLE IF NOT EXISTS files
     file_uuid UUID PRIMARY KEY,
     file_name VARCHAR(255),
     size BIGINT,
-    deleted BOOLEAN DEFAULT FALSE,
-    publication_id UUID REFERENCES publications(id)
+    deleted BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS file_details
@@ -22,5 +22,5 @@ CREATE TABLE IF NOT EXISTS file_details
     downloads_count INTEGER DEFAULT 0,
     expiration_time BIGINT NOT NULL,
     password VARCHAR(255),
-    link VARCHAR(255)
+    publication_id UUID REFERENCES publications(id)
 );

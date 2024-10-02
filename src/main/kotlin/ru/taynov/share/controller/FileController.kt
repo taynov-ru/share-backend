@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import ru.taynov.openapi.client.DefaultApi
-import ru.taynov.openapi.model.FileDownloadResponseDataGen
 import ru.taynov.openapi.model.FilePublishRequestGen
 import ru.taynov.openapi.model.FilePublishResponseDataGen
+import ru.taynov.openapi.model.GetPublicationResponseDataGen
 import ru.taynov.share.dto.UploadedFileResponse
 import ru.taynov.share.service.FileService
 
@@ -29,15 +29,15 @@ class FileController(
         return ResponseEntity.ok(fileService.deleteFile(id))
     }
 
-    override fun deletePublication(id: UUID): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
-    }
-
-    override fun downloadFile(): ResponseEntity<FileDownloadResponseDataGen> {
-        TODO("Not yet implemented")
-    }
-
     override fun publishFile(body: FilePublishRequestGen): ResponseEntity<FilePublishResponseDataGen> {
-        TODO("Not yet implemented")
+        return ResponseEntity.ok(fileService.publishFile(body))
+    }
+
+    override fun deletePublication(id: UUID): ResponseEntity<Unit> {
+        return ResponseEntity.ok(fileService.deletePublication(id))
+    }
+
+    override fun getPublication(id: UUID): ResponseEntity<GetPublicationResponseDataGen> {
+        return ResponseEntity.ok(fileService.getPublication(id))
     }
 }
