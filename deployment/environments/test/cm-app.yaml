@@ -9,3 +9,7 @@ data:
         url: jdbc:postgresql://postgres-db.share-test:5432/app
         username: ${POSTGRES_USER}
         password: ${POSTGRES_PASSWORD}
+    minio:
+      url: https://minio.share-test
+      username: ${MINIO_USER}
+      password: ${MINIO_PASSWORD}
