@@ -18,6 +18,8 @@ class MinioConfig {
             .endpoint(minioProperties.url)
             .credentials(minioProperties.username, minioProperties.password)
             .build()
+        minioClient.ignoreCertCheck()
+
         if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(minioProperties.bucket).build())) {
             minioClient.makeBucket(MakeBucketArgs.builder().bucket(minioProperties.bucket).build())
         }
