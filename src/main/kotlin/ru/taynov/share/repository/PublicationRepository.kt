@@ -7,5 +7,5 @@ import ru.taynov.share.entity.PublicationEntity
 
 @Repository
 interface PublicationRepository: JpaRepository<PublicationEntity, Long> {
-    fun findById(id: UUID): PublicationEntity
+    fun findById(id: UUID): PublicationEntity?
 }

@@ -1,5 +1,8 @@
 package ru.taynov.share.controller
 
+import jakarta.validation.Valid
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.util.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -13,6 +16,12 @@ import ru.taynov.openapi.model.FilePublishResponseDataGen
 import ru.taynov.openapi.model.GetPublicationResponseDataGen
 import ru.taynov.share.dto.UploadedFileResponse
 import ru.taynov.share.service.FileService
+import org.springframework.core.io.Resource
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.RequestBody
+import ru.taynov.openapi.model.GetPublicationRequestGen
+import ru.taynov.share.dto.DownloadFileRequest
 
 @RestController
 @RequestMapping("/api/v1")
@@ -20,7 +29,7 @@ class FileController(
     private val fileService: FileService
 ) : DefaultApi {
 
-    @PostMapping("/file/upload")
+    @PostMapping("/files/upload")
     fun uploadFile(@RequestParam file: MultipartFile): ResponseEntity<UploadedFileResponse> {
         return ResponseEntity.ok(fileService.uploadFile(file))
     }
@@ -37,7 +46,20 @@ class FileController(
         return ResponseEntity.ok(fileService.deletePublication(id))
     }
 
-    override fun getPublication(id: UUID): ResponseEntity<GetPublicationResponseDataGen> {
-        return ResponseEntity.ok(fileService.getPublication(id))
+    override fun getPublication(id: UUID, getPublicationRequestGen: GetPublicationRequestGen?):
+            ResponseEntity<GetPublicationResponseDataGen> {
+        return ResponseEntity.ok(fileService.getPublication(id, getPublicationRequestGen))
+    }
+
+    @PostMapping("/files", produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
+    fun downloadFile(
+        @RequestParam id: UUID,
+        @Valid @RequestBody downloadFileRequest: DownloadFileRequest
+    ): ResponseEntity<Resource> {
+        return ResponseEntity.ok()
+            .header(
+                HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + URLEncoder.encode(
+                fileService.getFilename(id), StandardCharsets.UTF_8))
+            .body(fileService.getFileResource(id, downloadFileRequest))
     }
 }

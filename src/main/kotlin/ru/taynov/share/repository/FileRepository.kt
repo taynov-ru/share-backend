@@ -7,5 +7,5 @@ import ru.taynov.share.entity.FileEntity
 
 @Repository
 interface FileRepository: JpaRepository<FileEntity, Long> {
-    fun findByFileUuid(uuid: UUID?): FileEntity
+    fun findByFileUuid(uuid: UUID?): FileEntity?
 }

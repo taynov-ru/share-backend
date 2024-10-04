@@ -30,7 +30,7 @@ paths:
                 $ref: '#/components/schemas/Error'
       x-codegen-request-body-name: body
   /publication/{id}:
-    get:
+    post:
       summary: Получение публикации
       operationId: get-publication
       parameters:
@@ -41,6 +41,11 @@ paths:
             format: uuid
           required: true
           description: Идентификатор публикации
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/GetPublicationRequest'
       responses:
         "200":
           description: GetPublicationResponse
@@ -94,6 +99,12 @@ components:
             format: uuid
         fileDetails:
           $ref: '#/components/schemas/FileDetails'
+    GetPublicationRequest:
+      type: object
+      properties:
+        password:
+          type: string
+          description: Пароль для доступа к публикации
     FileDetails:
       required:
       - downloadLimit

@@ -27,6 +27,8 @@ data class PublicationEntity(
     val downloadLink: String,
     @Column(name = "deleted")
     val deleted: Boolean = false,
+    @Column(name = "password")
+    val password: String?,
 
     @OneToMany(mappedBy = "publication", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     val files: List<FileDetailsEntity> = emptyList()
