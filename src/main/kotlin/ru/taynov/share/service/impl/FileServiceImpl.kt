@@ -10,9 +10,7 @@ import org.springframework.web.multipart.MultipartFile
 import ru.taynov.openapi.model.DownloadedFilesGen
 import ru.taynov.openapi.model.FilePublishRequestGen
 import ru.taynov.openapi.model.FilePublishResponseDataGen
-import ru.taynov.openapi.model.GetPublicationRequestGen
 import ru.taynov.openapi.model.GetPublicationResponseDataGen
-import ru.taynov.share.dto.DownloadFileRequest
 import ru.taynov.share.dto.UploadedFileResponse
 import ru.taynov.share.entity.FileDetailsEntity
 import ru.taynov.share.entity.FileEntity
@@ -112,9 +110,9 @@ class FileServiceImpl(
         publicationRepository.save(publication.copy(deleted = true))
     }
 
-    override fun getPublication(id: UUID, getPublicationRequestGen: GetPublicationRequestGen?): GetPublicationResponseDataGen {
+    override fun getPublication(id: UUID, password: String?): GetPublicationResponseDataGen {
         val publication = publicationRepository.findById(id) ?: throw PUBLICATION_NOT_FOUND.getException()
-        if (validationService.validatePassword(publication.password, getPublicationRequestGen?.password)) {
+        if (validationService.validatePassword(publication.password, password)) {
             throw PASSWORD_DOES_NOT_MATCH.getException()
         }
         val downloadedFiles = publication.files.map { details ->
@@ -143,10 +141,10 @@ class FileServiceImpl(
         return file.fileName
     }
 
-    override fun getFileResource(id: UUID, downloadFileRequest: DownloadFileRequest): Resource {
+    override fun getFileResource(id: UUID, password: String?): Resource {
         val fileDetails = fileDetailsRepository.findByFileId(id) ?: throw FILE_NOT_FOUND.getException()
         if (fileDetails.publication != null &&
-            validationService.validatePassword(fileDetails.publication?.password, downloadFileRequest.password)) {
+            validationService.validatePassword(fileDetails.publication?.password, password)) {
             throw PASSWORD_DOES_NOT_MATCH.getException()
         }
         if (fileDetails.downloadsLimit != 0 && fileDetails.downloadsCount >= fileDetails.downloadsLimit) {

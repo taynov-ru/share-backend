@@ -5,9 +5,7 @@ import org.springframework.core.io.Resource
 import org.springframework.web.multipart.MultipartFile
 import ru.taynov.openapi.model.FilePublishRequestGen
 import ru.taynov.openapi.model.FilePublishResponseDataGen
-import ru.taynov.openapi.model.GetPublicationRequestGen
 import ru.taynov.openapi.model.GetPublicationResponseDataGen
-import ru.taynov.share.dto.DownloadFileRequest
 import ru.taynov.share.dto.UploadedFileResponse
 
 interface FileService {
@@ -20,9 +18,9 @@ interface FileService {
 
     fun deletePublication(id: UUID)
 
-    fun getPublication(id: UUID, getPublicationRequestGen: GetPublicationRequestGen?): GetPublicationResponseDataGen
+    fun getPublication(id: UUID, password: String?): GetPublicationResponseDataGen
 
     fun getFilename(id: UUID): String
 
-    fun getFileResource(id: UUID, downloadFileRequest: DownloadFileRequest): Resource
+    fun getFileResource(id: UUID, password: String?): Resource
 }

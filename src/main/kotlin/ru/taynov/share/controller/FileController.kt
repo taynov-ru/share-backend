@@ -1,6 +1,5 @@
 package ru.taynov.share.controller
 
-import jakarta.validation.Valid
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -19,9 +18,8 @@ import ru.taynov.share.service.FileService
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.RequestBody
-import ru.taynov.openapi.model.GetPublicationRequestGen
-import ru.taynov.share.dto.DownloadFileRequest
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestHeader
 
 @RestController
 @RequestMapping("/api/v1")
@@ -46,20 +44,20 @@ class FileController(
         return ResponseEntity.ok(fileService.deletePublication(id))
     }
 
-    override fun getPublication(id: UUID, getPublicationRequestGen: GetPublicationRequestGen?):
+    override fun getPublication(id: UUID, password: String?):
             ResponseEntity<GetPublicationResponseDataGen> {
-        return ResponseEntity.ok(fileService.getPublication(id, getPublicationRequestGen))
+        return ResponseEntity.ok(fileService.getPublication(id, password))
     }
 
-    @PostMapping("/files", produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
+    @GetMapping("/files", produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun downloadFile(
         @RequestParam id: UUID,
-        @Valid @RequestBody downloadFileRequest: DownloadFileRequest
+        @RequestHeader(required = false) password: String?
     ): ResponseEntity<Resource> {
         return ResponseEntity.ok()
             .header(
                 HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + URLEncoder.encode(
                 fileService.getFilename(id), StandardCharsets.UTF_8))
-            .body(fileService.getFileResource(id, downloadFileRequest))
+            .body(fileService.getFileResource(id, password))
     }
 }
