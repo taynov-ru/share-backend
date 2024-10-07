@@ -1,6 +1,6 @@
 package ru.taynov.share.repository
 
-import java.util.*
+import java.util.UUID
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import ru.taynov.share.entity.FileDetailsEntity

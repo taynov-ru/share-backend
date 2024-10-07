@@ -2,7 +2,7 @@ package ru.taynov.share.service.impl
 
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import java.util.*
+import java.util.UUID
 import org.springframework.core.io.InputStreamResource
 import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
@@ -21,13 +21,9 @@ import ru.taynov.share.repository.PublicationRepository
 import ru.taynov.share.service.FileService
 import ru.taynov.share.service.StorageService
 import ru.taynov.share.enums.FileExceptionCode.FILE_DOWNLOAD_LIMIT_EXCEEDED
-import ru.taynov.share.enums.FileExceptionCode.FILE_LIMIT_EXCEEDED
 import ru.taynov.share.enums.FileExceptionCode.PUBLICATION_NOT_FOUND
 import ru.taynov.share.enums.FileExceptionCode.FILE_NOT_FOUND
-import ru.taynov.share.enums.FileExceptionCode.ERROR_EMPTY_FILE
-import ru.taynov.share.enums.FileExceptionCode.INVALID_FILE_SIZE
 import ru.taynov.share.enums.FileExceptionCode.FILE_CANNOT_BE_DELETED
-import ru.taynov.share.enums.FileExceptionCode.PASSWORD_DOES_NOT_MATCH
 import ru.taynov.share.service.ValidationService
 
 @Service
@@ -40,9 +36,7 @@ class FileServiceImpl(
 ) : FileService {
 
     override fun uploadFile(file: MultipartFile): UploadedFileResponse {
-        if (validationService.validateFileSize(file.size)) {
-            throw INVALID_FILE_SIZE.getException()
-        }
+        validationService.validateFileSize(file.size)
         val uploadedFile = fileRepository.save(
             FileEntity(
                 fileName = file.originalFilename ?: "untitled",
@@ -56,22 +50,14 @@ class FileServiceImpl(
     override fun deleteFile(id: UUID) {
         val file = fileRepository.findByFileUuid(id) ?: throw FILE_NOT_FOUND.getException()
         val fileDetails = fileDetailsRepository.findByFileId(id)
-        if (fileDetails?.publication == null) {
-            fileRepository.save(file.copy(deleted = true))
-        } else {
-            throw FILE_CANNOT_BE_DELETED.getException()
-        }
+        if (fileDetails?.publication != null) throw FILE_CANNOT_BE_DELETED.getException()
+        fileRepository.save(file.copy(deleted = true))
     }
 
     override fun publishFile(filePublishRequest: FilePublishRequestGen): FilePublishResponseDataGen {
         val publishDate = LocalDateTime.now()
         val fileIds = filePublishRequest.fileIds
-        if (validationService.validateFileIds(fileIds)) {
-            throw ERROR_EMPTY_FILE.getException()
-        }
-        if (validationService.validateFileIdsSize(fileIds.size)) {
-            throw FILE_LIMIT_EXCEEDED.getException()
-        }
+        validationService.validatePublishFiles(fileIds, fileIds.size)
 
         val publishingFiles = fileIds.map { fileId ->
            fileRepository.findByFileUuid(fileId) ?: throw FILE_NOT_FOUND.getException()
@@ -112,9 +98,7 @@ class FileServiceImpl(
 
     override fun getPublication(id: UUID, password: String?): GetPublicationResponseDataGen {
         val publication = publicationRepository.findById(id) ?: throw PUBLICATION_NOT_FOUND.getException()
-        if (validationService.validatePassword(publication.password, password)) {
-            throw PASSWORD_DOES_NOT_MATCH.getException()
-        }
+        validationService.validatePassword(publication.password, password)
         val downloadedFiles = publication.files.map { details ->
             val file = fileRepository.findByFileUuid(details.fileId) ?: throw FILE_NOT_FOUND.getException()
             val downloadsLeft = if (details.downloadsLimit != 0) {
@@ -143,14 +127,13 @@ class FileServiceImpl(
 
     override fun getFileResource(id: UUID, password: String?): Resource {
         val fileDetails = fileDetailsRepository.findByFileId(id) ?: throw FILE_NOT_FOUND.getException()
-        if (fileDetails.publication != null &&
-            validationService.validatePassword(fileDetails.publication?.password, password)) {
-            throw PASSWORD_DOES_NOT_MATCH.getException()
+        if (fileDetails.publication != null) {
+            validationService.validatePassword(fileDetails.publication?.password, password)
         }
         if (fileDetails.downloadsLimit != 0 && fileDetails.downloadsCount >= fileDetails.downloadsLimit) {
             throw FILE_DOWNLOAD_LIMIT_EXCEEDED.getException()
         }
         fileDetailsRepository.save(fileDetails.copy(downloadsCount = fileDetails.downloadsCount + 1))
-        return InputStreamResource(storageService.getInputStream(id))
+        return InputStreamResource(storageService.getFile(id))
     }
 }

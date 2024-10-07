@@ -1,6 +1,6 @@
 package ru.taynov.share.dto
 
-import java.util.*
+import java.util.UUID
 
 data class UploadedFileResponse(
     val fileId: UUID?,

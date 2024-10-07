@@ -1,14 +1,12 @@
 package ru.taynov.share.service
 
-import java.util.*
+import java.util.UUID
 
 interface ValidationService {
 
-    fun validateFileSize(fileSize: Long): Boolean
+    fun validateFileSize(fileSize: Long)
 
-    fun validateFileIds(fileIds: List<UUID>): Boolean
+    fun validatePassword(publicationPassword: String?, enteredPassword: String?)
 
-    fun validateFileIdsSize(size: Int): Boolean
-
-    fun validatePassword(publicationPassword: String?, enteredPassword: String?): Boolean
+    fun validatePublishFiles(fileIds: List<UUID>, size: Int)
 }

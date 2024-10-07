@@ -4,7 +4,7 @@ import io.minio.GetObjectArgs
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
 import java.io.InputStream
-import java.util.*
+import java.util.UUID
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -35,7 +35,7 @@ class StorageServiceImpl(
         }
     }
 
-    override fun getInputStream(id: UUID): InputStream {
+    override fun getFile(id: UUID): InputStream {
         runCatching {
             return minioClient.getObject(
                 GetObjectArgs.builder()
