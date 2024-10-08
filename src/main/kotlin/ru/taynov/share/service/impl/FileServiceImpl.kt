@@ -96,8 +96,8 @@ class FileServiceImpl(
         publicationRepository.save(publication.copy(deleted = true))
     }
 
-    override fun getPublication(id: UUID, password: String?): GetPublicationResponseDataGen {
-        val publication = publicationRepository.findById(id) ?: throw PUBLICATION_NOT_FOUND.getException()
+    override fun getPublication(downloadLink: String, password: String?): GetPublicationResponseDataGen {
+        val publication = publicationRepository.findByDownloadLink(downloadLink) ?: throw PUBLICATION_NOT_FOUND.getException()
         validationService.validatePassword(publication.password, password)
         val downloadedFiles = publication.files.map { details ->
             val file = fileRepository.findByFileUuid(details.fileId) ?: throw FILE_NOT_FOUND.getException()

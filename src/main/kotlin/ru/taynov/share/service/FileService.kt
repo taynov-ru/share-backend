@@ -18,7 +18,7 @@ interface FileService {
 
     fun deletePublication(id: UUID)
 
-    fun getPublication(id: UUID, password: String?): GetPublicationResponseDataGen
+    fun getPublication(downloadLink: String, password: String?): GetPublicationResponseDataGen
 
     fun getFilename(id: UUID): String
 

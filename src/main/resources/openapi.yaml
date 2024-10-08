@@ -29,7 +29,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       x-codegen-request-body-name: body
-  /publication/{id}:
+  /publication/{downloadLink}:
     get:
       summary: Получение публикации
       operationId: get-publication
@@ -40,12 +40,11 @@ paths:
             type: string
             description: Пароль для доступа к публикации
         - in: path
-          name: id
+          name: downloadLink
           schema:
             type: string
-            format: uuid
           required: true
-          description: Идентификатор публикации
+          description: Ссылка на публикацию
       responses:
         "200":
           description: GetPublicationResponse

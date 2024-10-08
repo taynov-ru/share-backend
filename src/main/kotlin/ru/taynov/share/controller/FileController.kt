@@ -44,9 +44,9 @@ class FileController(
         return ResponseEntity.ok(fileService.deletePublication(id))
     }
 
-    override fun getPublication(id: UUID, password: String?):
+    override fun getPublication(downloadLink: String, password: String?):
             ResponseEntity<GetPublicationResponseDataGen> {
-        return ResponseEntity.ok(fileService.getPublication(id, password))
+        return ResponseEntity.ok(fileService.getPublication(downloadLink, password))
     }
 
     @GetMapping("/files", produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
