@@ -1,6 +1,8 @@
 package ru.taynov.share.controller
 
-import java.util.*
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
+import java.util.UUID
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -13,6 +15,11 @@ import ru.taynov.openapi.model.FilePublishResponseDataGen
 import ru.taynov.openapi.model.GetPublicationResponseDataGen
 import ru.taynov.share.dto.UploadedFileResponse
 import ru.taynov.share.service.FileService
+import org.springframework.core.io.Resource
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestHeader
 
 @RestController
 @RequestMapping("/api/v1")
@@ -20,7 +27,7 @@ class FileController(
     private val fileService: FileService
 ) : DefaultApi {
 
-    @PostMapping("/file/upload")
+    @PostMapping("/files/upload")
     fun uploadFile(@RequestParam file: MultipartFile): ResponseEntity<UploadedFileResponse> {
         return ResponseEntity.ok(fileService.uploadFile(file))
     }
@@ -37,7 +44,20 @@ class FileController(
         return ResponseEntity.ok(fileService.deletePublication(id))
     }
 
-    override fun getPublication(id: UUID): ResponseEntity<GetPublicationResponseDataGen> {
-        return ResponseEntity.ok(fileService.getPublication(id))
+    override fun getPublication(downloadLink: String, password: String?):
+            ResponseEntity<GetPublicationResponseDataGen> {
+        return ResponseEntity.ok(fileService.getPublication(downloadLink, password))
+    }
+
+    @GetMapping("/files", produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
+    fun downloadFile(
+        @RequestParam id: UUID,
+        @RequestHeader(required = false) password: String?
+    ): ResponseEntity<Resource> {
+        return ResponseEntity.ok()
+            .header(
+                HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + URLEncoder.encode(
+                fileService.getFilename(id), StandardCharsets.UTF_8))
+            .body(fileService.getFileResource(id, password))
     }
 }

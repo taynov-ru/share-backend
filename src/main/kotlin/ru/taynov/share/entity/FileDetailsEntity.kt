@@ -26,8 +26,6 @@ data class FileDetailsEntity (
     val downloadsCount: Int = 0,
     @Column(name = "expiration_time")
     val expirationTime: Long,
-    @Column(name = "password")
-    val password: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publication_id", referencedColumnName = "id")

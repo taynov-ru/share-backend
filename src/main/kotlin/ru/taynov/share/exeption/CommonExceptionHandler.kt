@@ -9,10 +9,12 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.servlet.NoHandlerFoundException
 import ru.taynov.openapi.model.ErrorGen
 import ru.taynov.share.utils.INTERNAL_SERVER_ERROR
 import ru.taynov.share.utils.INVALID_PARAMETERS
 import ru.taynov.share.utils.METHOD_ARGUMENT_NOT_VALID_ERROR
+import ru.taynov.share.utils.NOT_FOUND
 import ru.taynov.share.utils.VALIDATION_ERROR
 
 @ControllerAdvice
@@ -51,6 +53,13 @@ class CommonExceptionHandler {
         log.error("ConstraintViolationException was thrown: $ex", ex)
         val error = ErrorGen(INVALID_PARAMETERS, "Отсутствуют обязательные параметры")
         return ResponseEntity(error, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(NoHandlerFoundException::class)
+    fun handleNotFoundException(ex: NoHandlerFoundException): ResponseEntity<ErrorGen> {
+        log.error("NoHandlerFoundException was thrown: $ex", ex)
+        val error = ErrorGen(NOT_FOUND, "404 Not Found")
+        return ResponseEntity(error, HttpStatus.NOT_FOUND)
     }
 
     companion object {

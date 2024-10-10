@@ -1,0 +1,1 @@
+CREATE INDEX publication_index ON publications (download_link);
