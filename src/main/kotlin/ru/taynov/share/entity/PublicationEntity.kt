@@ -10,6 +10,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.UUID
 
 @Entity
@@ -20,9 +21,9 @@ data class PublicationEntity(
     @Column(name = "id")
     val id: UUID? = null,
     @Column(name = "publish_date")
-    val publishDate: LocalDateTime,
+    val publishDate: ZonedDateTime,
     @Column(name = "expiration_date")
-    val expirationDate: LocalDateTime,
+    val expirationDate: ZonedDateTime,
     @Column(name = "download_link")
     val downloadLink: String,
     @Column(name = "deleted")

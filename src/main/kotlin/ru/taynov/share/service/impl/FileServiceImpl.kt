@@ -25,6 +25,7 @@ import ru.taynov.share.enums.FileExceptionCode.PUBLICATION_NOT_FOUND
 import ru.taynov.share.enums.FileExceptionCode.FILE_NOT_FOUND
 import ru.taynov.share.enums.FileExceptionCode.FILE_CANNOT_BE_DELETED
 import ru.taynov.share.service.ValidationService
+import java.time.ZonedDateTime
 
 @Service
 class FileServiceImpl(
@@ -55,7 +56,7 @@ class FileServiceImpl(
     }
 
     override fun publishFile(filePublishRequest: FilePublishRequestGen): FilePublishResponseDataGen {
-        val publishDate = LocalDateTime.now()
+        val publishDate = ZonedDateTime.now()
         val fileIds = filePublishRequest.fileIds
         validationService.validatePublishFiles(fileIds, fileIds.size)
 
