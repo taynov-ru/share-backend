@@ -27,3 +27,5 @@ CREATE TABLE IF NOT EXISTS file_details
 );
 
 CREATE INDEX publication_link_index ON publications (download_link);
+CREATE INDEX expiration_date_index ON publications (expiration_date);
+CREATE INDEX publication_id_index ON file_details (publication_id);

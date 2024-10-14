@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres-db.share-test.svc.cluster.local:5432/app
+    username: share
+    password: 1ik9T8pfBxh9ucUEEMinfPgYTZMMDHgGi7osfq9POlBykd8Qi1IKDMsF24sDVm03
+minio:
+  url: https://minio.share-test.svc.cluster.local
+  username: minio
+  password: minio123
