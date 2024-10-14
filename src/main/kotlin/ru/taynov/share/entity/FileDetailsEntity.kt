@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.MapsId
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
+import java.time.ZonedDateTime
 import java.util.UUID
 
 @Entity
@@ -26,6 +27,8 @@ data class FileDetailsEntity (
     val downloadsCount: Int = 0,
     @Column(name = "expiration_time")
     val expirationTime: Long,
+    @Column(name = "upload_date")
+    val uploadDate: ZonedDateTime,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publication_id", referencedColumnName = "id")

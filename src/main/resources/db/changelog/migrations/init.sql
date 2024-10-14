@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS publications
     publish_date TIMESTAMP WITHOUT TIME ZONE,
     expiration_date TIMESTAMP WITHOUT TIME ZONE,
     download_link VARCHAR(255),
+    password VARCHAR(255),
     deleted BOOLEAN DEFAULT FALSE
 );
 
@@ -21,6 +22,8 @@ CREATE TABLE IF NOT EXISTS file_details
     downloads_limit INTEGER DEFAULT 0,
     downloads_count INTEGER DEFAULT 0,
     expiration_time BIGINT NOT NULL,
-    password VARCHAR(255),
+    upload_date TIMESTAMP WITHOUT TIME ZONE,
     publication_id UUID REFERENCES publications(id)
 );
+
+CREATE INDEX publication_link_index ON publications (download_link);

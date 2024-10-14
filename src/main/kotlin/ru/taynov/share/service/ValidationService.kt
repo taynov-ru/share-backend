@@ -8,5 +8,5 @@ interface ValidationService {
 
     fun validatePassword(publicationPassword: String?, enteredPassword: String?)
 
-    fun validatePublishFiles(fileIds: List<UUID>, size: Int)
+    fun validatePublishFiles(fileIds: List<UUID>, size: Int, link: String)
 }

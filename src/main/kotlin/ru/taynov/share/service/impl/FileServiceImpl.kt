@@ -1,6 +1,5 @@
 package ru.taynov.share.service.impl
 
-import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 import org.springframework.core.io.InputStreamResource
@@ -52,13 +51,15 @@ class FileServiceImpl(
         val file = fileRepository.findByFileUuid(id) ?: throw FILE_NOT_FOUND.getException()
         val fileDetails = fileDetailsRepository.findByFileId(id)
         if (fileDetails?.publication != null) throw FILE_CANNOT_BE_DELETED.getException()
+        storageService.deleteFile(id)
         fileRepository.save(file.copy(deleted = true))
     }
 
     override fun publishFile(filePublishRequest: FilePublishRequestGen): FilePublishResponseDataGen {
         val publishDate = ZonedDateTime.now()
         val fileIds = filePublishRequest.fileIds
-        validationService.validatePublishFiles(fileIds, fileIds.size)
+        val fileDetails = filePublishRequest.fileDetails
+        validationService.validatePublishFiles(fileIds, fileIds.size, fileDetails.link)
 
         val publishingFiles = fileIds.map { fileId ->
            fileRepository.findByFileUuid(fileId) ?: throw FILE_NOT_FOUND.getException()
@@ -67,19 +68,20 @@ class FileServiceImpl(
         val publication = publicationRepository.save(
             PublicationEntity(
                 publishDate = publishDate,
-                expirationDate = publishDate.plus(filePublishRequest.fileDetails.expirationTime.toLong(), ChronoUnit.SECONDS),
-                downloadLink = filePublishRequest.fileDetails.link,
-                password = filePublishRequest.fileDetails.password,
+                expirationDate = publishDate.plus(fileDetails.expirationTime.toLong(), ChronoUnit.SECONDS),
+                downloadLink = fileDetails.link,
+                password = fileDetails.password,
             )
         )
 
         publishingFiles.forEach {
             fileDetailsRepository.save(
                 FileDetailsEntity(
-                    downloadsLimit = filePublishRequest.fileDetails.downloadLimit,
-                    expirationTime = filePublishRequest.fileDetails.expirationTime.toLong(),
+                    downloadsLimit = fileDetails.downloadLimit,
+                    expirationTime = fileDetails.expirationTime.toLong(),
                     publication = publication,
-                    uploadedFileId = it
+                    uploadedFileId = it,
+                    uploadDate = publishDate
                 )
             )
         }
@@ -90,18 +92,21 @@ class FileServiceImpl(
 
     override fun deletePublication(id: UUID) {
         val publication = publicationRepository.findById(id) ?: throw PUBLICATION_NOT_FOUND.getException()
-        publication.files.forEach {
-            val file = fileRepository.findByFileUuid(it.fileId) ?: throw FILE_NOT_FOUND.getException()
+        publication.files.forEach { fileDetails ->
+            val file = fileDetails.uploadedFileId ?: throw FILE_NOT_FOUND.getException()
+            file.fileUuid?.let { storageService.deleteFile(it) }
             fileRepository.save(file.copy(deleted = true))
         }
         publicationRepository.save(publication.copy(deleted = true))
     }
 
     override fun getPublication(downloadLink: String, password: String?): GetPublicationResponseDataGen {
-        val publication = publicationRepository.findByDownloadLink(downloadLink) ?: throw PUBLICATION_NOT_FOUND.getException()
+        val publication = publicationRepository.findByDownloadLink(downloadLink)
+            ?.takeIf { !it.deleted }
+            ?: throw PUBLICATION_NOT_FOUND.getException()
         validationService.validatePassword(publication.password, password)
         val downloadedFiles = publication.files.map { details ->
-            val file = fileRepository.findByFileUuid(details.fileId) ?: throw FILE_NOT_FOUND.getException()
+            val file = details.uploadedFileId ?: throw FILE_NOT_FOUND.getException()
             val downloadsLeft = if (details.downloadsLimit != 0) {
                  details.downloadsLimit - details.downloadsCount
             } else { null }

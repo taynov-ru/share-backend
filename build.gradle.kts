@@ -45,6 +45,7 @@ dependencies {
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	compileOnly ("org.openapitools:jackson-databind-nullable:0.2.1")
+	implementation("org.springframework.boot:spring-boot-starter-quartz:3.3.0")
 }
 
 kotlin {

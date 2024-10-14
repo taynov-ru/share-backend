@@ -3,6 +3,26 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
+quartz:
+  job-store-type: jdbc
+  jdbc:
+    initialize-schema: never
+  properties:
+    org:
+      quartz:
+        scheduler:
+          instanceName: MyQuartzScheduler
+          instanceId: AUTO
+        threadPool:
+          threadCount: 5
+        jobStore:
+          class: org.quartz.impl.jdbcjobstore.JobStoreTX
+          isClustered: true
+          clusterCheckinInterval: 10000
+          useProperties: false
+          driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+          tablePrefix: QRTZ_
+          dataSource: spring.datasource
 minio:
   url: http://localhost:9000
   username: minio

@@ -9,4 +9,6 @@ interface StorageService {
     fun saveFile(file: MultipartFile, id: UUID?)
 
     fun getFile(id: UUID): InputStream
+
+    fun deleteFile(id: UUID)
 }

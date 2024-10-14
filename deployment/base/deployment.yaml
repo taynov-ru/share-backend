@@ -5,7 +5,7 @@ metadata:
   labels:
     app: share-backend-app
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: share-backend-app

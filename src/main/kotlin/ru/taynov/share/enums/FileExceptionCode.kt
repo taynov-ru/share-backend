@@ -19,12 +19,14 @@ enum class FileExceptionCode(
         HttpStatus.BAD_REQUEST),
     FILE_NOT_FOUND("FILE_NOT_FOUND", "Файл не найден", HttpStatus.NOT_FOUND),
     PUBLICATION_NOT_FOUND("PUBLICATION_NOT_FOUND", "Публикация не найдена", HttpStatus.NOT_FOUND),
-    STORAGE_ERROR("STORAGE_ERROR", "Ошибка сохранения/извлечения файла",
+    STORAGE_ERROR("STORAGE_ERROR", "Ошибка сохранения/извлечения/удаления файла",
         HttpStatus.INTERNAL_SERVER_ERROR),
     FILE_CANNOT_BE_DELETED("FILE_CANNOT_BE_DELETED", "Файл не может быть удален",
         HttpStatus.BAD_REQUEST),
     PASSWORD_DOES_NOT_MATCH("PASSWORD_DOES_NOT_MATCH", "Введите корректный пароль",
-        HttpStatus.BAD_REQUEST);
+        HttpStatus.BAD_REQUEST),
+    LINK_ALREADY_EXISTS("LINK_ALREADY_EXISTS",
+        "Такое имя ссылки уже используется. Пожалуйста, выберите другое имя", HttpStatus.BAD_REQUEST);
 
     fun getException(): ApiException {
         return ApiException(errorCode, httpStatusCode, errorMessage)

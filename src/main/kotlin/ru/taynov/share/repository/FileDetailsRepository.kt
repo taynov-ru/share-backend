@@ -7,5 +7,8 @@ import ru.taynov.share.entity.FileDetailsEntity
 
 @Repository
 interface FileDetailsRepository: JpaRepository<FileDetailsEntity, Long> {
+
     fun findByFileId(fileId: UUID): FileDetailsEntity?
+
+    fun findAllByPublicationIsNull(): List<FileDetailsEntity>?
 }

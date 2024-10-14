@@ -3,6 +3,7 @@ package ru.taynov.share.service.impl
 import io.minio.GetObjectArgs
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
+import io.minio.RemoveObjectArgs
 import java.io.InputStream
 import java.util.UUID
 import org.slf4j.Logger
@@ -39,6 +40,20 @@ class StorageServiceImpl(
         runCatching {
             return minioClient.getObject(
                 GetObjectArgs.builder()
+                    .bucket(minioProperties.bucket)
+                    .`object`(id.toString())
+                    .build()
+            )
+        }.getOrElse { ex ->
+            log.error(ex.toString(), ex)
+            throw STORAGE_ERROR.getException()
+        }
+    }
+
+    override fun deleteFile(id: UUID) {
+        runCatching {
+            return minioClient.removeObject(
+                RemoveObjectArgs.builder()
                     .bucket(minioProperties.bucket)
                     .`object`(id.toString())
                     .build()
