@@ -4,7 +4,9 @@ import io.minio.GetObjectArgs
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
 import io.minio.RemoveObjectArgs
+import io.minio.StatObjectArgs
 import java.io.InputStream
+import java.time.ZonedDateTime
 import java.util.UUID
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -58,6 +60,20 @@ class StorageServiceImpl(
                     .`object`(id.toString())
                     .build()
             )
+        }.getOrElse { ex ->
+            log.error(ex.toString(), ex)
+            throw STORAGE_ERROR.getException()
+        }
+    }
+
+    override fun getFileUploadDate(id: UUID): ZonedDateTime {
+        runCatching {
+            return minioClient.statObject(
+                StatObjectArgs.builder()
+                    .bucket(minioProperties.bucket)
+                    .`object`(id.toString())
+                    .build()
+            ).lastModified()
         }.getOrElse { ex ->
             log.error(ex.toString(), ex)
             throw STORAGE_ERROR.getException()

@@ -22,10 +22,8 @@ CREATE TABLE IF NOT EXISTS file_details
     downloads_limit INTEGER DEFAULT 0,
     downloads_count INTEGER DEFAULT 0,
     expiration_time BIGINT NOT NULL,
-    upload_date TIMESTAMP WITHOUT TIME ZONE,
     publication_id UUID REFERENCES publications(id)
 );
 
 CREATE INDEX publication_link_index ON publications (download_link);
 CREATE INDEX expiration_date_index ON publications (expiration_date);
-CREATE INDEX publication_id_index ON file_details (publication_id);
