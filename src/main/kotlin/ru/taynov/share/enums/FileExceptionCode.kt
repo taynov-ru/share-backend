@@ -29,6 +29,6 @@ enum class FileExceptionCode(
         "Такое имя ссылки уже используется. Пожалуйста, выберите другое имя", HttpStatus.BAD_REQUEST);
 
     fun getException(): ApiException {
-        return ApiException(errorCode, httpStatusCode, errorMessage)
+        return ApiException(code = errorCode, httpStatus = httpStatusCode, message = errorMessage)
     }
 }
