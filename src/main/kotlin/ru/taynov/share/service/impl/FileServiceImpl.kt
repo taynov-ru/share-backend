@@ -81,7 +81,6 @@ class FileServiceImpl(
                     expirationTime = fileDetails.expirationTime.toLong(),
                     publication = publication,
                     uploadedFileId = it,
-                    uploadDate = publishDate
                 )
             )
         }
