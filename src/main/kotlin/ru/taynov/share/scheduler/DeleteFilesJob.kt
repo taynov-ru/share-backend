@@ -5,7 +5,8 @@ import java.time.ZonedDateTime
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import ru.taynov.share.dto.JobProperties
+import ru.taynov.share.config.properties.DeleteFilesJobProperties
+import ru.taynov.share.config.properties.JobProperties
 import ru.taynov.share.repository.FileRepository
 import ru.taynov.share.repository.PublicationRepository
 import ru.taynov.share.service.StorageService
@@ -15,6 +16,7 @@ class DeleteFilesJob(
     private val fileRepository: FileRepository,
     private val storageService: StorageService,
     private val publicationRepository: PublicationRepository,
+    private val deleteFilesJobProperties: DeleteFilesJobProperties
 ): Job {
 
     @Transactional
@@ -49,11 +51,7 @@ class DeleteFilesJob(
     }
 
     override fun getProperties(): JobProperties {
-        return JobProperties(
-            name = "delete-files-job",
-            delay = 24,
-            enabled = true
-        )
+        return deleteFilesJobProperties
     }
 
     companion object {

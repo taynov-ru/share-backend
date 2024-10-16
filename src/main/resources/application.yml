@@ -27,5 +27,11 @@ logbook:
 logging:
   level:
     org.zalando.logbook: TRACE
+
+jobs:
+  delete-files:
+    name: "delete-files-job"
+    timeout: 86400
+    enabled: true
 #server:
 #  port: 8080

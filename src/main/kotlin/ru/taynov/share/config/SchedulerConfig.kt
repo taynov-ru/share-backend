@@ -25,7 +25,7 @@ class SchedulerConfig(
         val enabledJobs = jobs.filter { job -> job.getProperties().enabled }
         val tasks = enabledJobs.map { job ->
             val prop = job.getProperties()
-            val fixedDelay = FixedDelay.of(Duration.ofHours(prop.delay))
+            val fixedDelay = FixedDelay.of(Duration.ofSeconds(prop.timeout))
             Tasks.recurring(prop.name, fixedDelay)
                 .execute { _: TaskInstance<Void?>?, _: ExecutionContext? ->
                     runCatching {
@@ -35,7 +35,7 @@ class SchedulerConfig(
         }
         val scheduler = Scheduler.create(dataSource)
             .startTasks(tasks)
-            .pollingInterval(Duration.ofSeconds(10))
+            .pollingInterval(Duration.ofSeconds(60))
             .registerShutdownHook()
             .build()
 
