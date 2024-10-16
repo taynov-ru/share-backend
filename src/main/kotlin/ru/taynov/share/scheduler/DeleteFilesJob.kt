@@ -5,6 +5,7 @@ import java.time.ZonedDateTime
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import ru.taynov.share.dto.JobProperties
 import ru.taynov.share.repository.FileRepository
 import ru.taynov.share.repository.PublicationRepository
 import ru.taynov.share.service.StorageService
@@ -14,10 +15,10 @@ class DeleteFilesJob(
     private val fileRepository: FileRepository,
     private val storageService: StorageService,
     private val publicationRepository: PublicationRepository,
-) {
+): Job {
 
     @Transactional
-    fun execute() {
+    override fun execute() {
         runCatching {
             val now = ZonedDateTime.now()
             val expiredPublication = publicationRepository.findByExpirationDateBeforeAndDeletedFalse(now)
@@ -34,7 +35,7 @@ class DeleteFilesJob(
 
             val unrelatedFilesToDelete = fileRepository.findAllByFileDetailsIsNullAndDeletedIsFalse()
                 ?.filter { file ->
-                    file.fileUuid?.let { storageService.getFileUploadDate(it).plusMinutes(3).isBefore(now) } == true
+                    file.fileUuid?.let { storageService.getFileUploadDate(it).plusHours(12).isBefore(now) } == true
                 }
             unrelatedFilesToDelete?.forEach { file ->
                 log.info("Marking file as deleted: ${file.fileName}")
@@ -45,6 +46,14 @@ class DeleteFilesJob(
             log.error(ex.toString(), ex)
             throw RuntimeException()
         }
+    }
+
+    override fun getProperties(): JobProperties {
+        return JobProperties(
+            name = "delete-files-job",
+            delay = 24,
+            enabled = true
+        )
     }
 
     companion object {
