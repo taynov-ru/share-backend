@@ -27,8 +27,6 @@ data class FileDetailsEntity (
     val downloadsCount: Int = 0,
     @Column(name = "expiration_time")
     val expirationTime: Long,
-    @Column(name = "upload_date")
-    val uploadDate: ZonedDateTime,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publication_id", referencedColumnName = "id")
