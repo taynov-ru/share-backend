@@ -10,6 +10,7 @@ data:
         username: ${POSTGRES_USER}
         password: ${POSTGRES_PASSWORD}
     minio:
-      url: https://minio.share-test
+      url: https://minio.share-test.svc.cluster.local
       username: ${MINIO_USER}
       password: ${MINIO_PASSWORD}
+      presignedUrlExpiry: 10
