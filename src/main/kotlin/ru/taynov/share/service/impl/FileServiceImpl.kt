@@ -137,6 +137,10 @@ class FileServiceImpl(
         fileDetailsRepository.save(fileDetails.copy(downloadsCount = fileDetails.downloadsCount + 1))
 
         val filename = fileRepository.findByFileUuid(id)?.fileName ?: throw FILE_NOT_FOUND.getException()
-        return storageService.getFileUrl(id, filename) ?: throw FILE_NOT_FOUND.getException()
+        return storageService.getFileUrl(id, filename)?.extractPath() ?: throw FILE_NOT_FOUND.getException()
+    }
+
+    private fun String.extractPath(): String {
+        return this.substringAfter("://").substringAfter("/")
     }
 }
