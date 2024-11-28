@@ -1,10 +1,12 @@
 package ru.taynov.share.service.impl
 
 import io.minio.GetObjectArgs
+import io.minio.GetPresignedObjectUrlArgs
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
 import io.minio.RemoveObjectArgs
 import io.minio.StatObjectArgs
+import io.minio.http.Method
 import java.io.InputStream
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -36,6 +38,18 @@ class StorageServiceImpl(
             log.error(ex.toString(), ex)
             throw STORAGE_ERROR.getException()
         }
+    }
+
+    override fun getFileUrl(id: UUID, filename: String): String? {
+        return minioClient.getPresignedObjectUrl(
+            GetPresignedObjectUrlArgs.builder()
+                .method(Method.GET)
+                .bucket(minioProperties.bucket)
+                .`object`(id.toString())
+                .expiry(minioProperties.presignedUrlExpiry)
+                .extraQueryParams(mapOf("response-content-disposition" to "attachment; filename=\"$filename\""))
+                .build()
+        )
     }
 
     override fun getFile(id: UUID): InputStream {

@@ -1,9 +1,5 @@
 package ru.taynov.share.service.impl
 
-import java.time.temporal.ChronoUnit
-import java.util.UUID
-import org.springframework.core.io.InputStreamResource
-import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import ru.taynov.openapi.model.DownloadedFilesGen
@@ -14,17 +10,19 @@ import ru.taynov.share.dto.UploadedFileResponse
 import ru.taynov.share.entity.FileDetailsEntity
 import ru.taynov.share.entity.FileEntity
 import ru.taynov.share.entity.PublicationEntity
+import ru.taynov.share.enums.FileExceptionCode.FILE_CANNOT_BE_DELETED
+import ru.taynov.share.enums.FileExceptionCode.FILE_DOWNLOAD_LIMIT_EXCEEDED
+import ru.taynov.share.enums.FileExceptionCode.FILE_NOT_FOUND
+import ru.taynov.share.enums.FileExceptionCode.PUBLICATION_NOT_FOUND
 import ru.taynov.share.repository.FileDetailsRepository
 import ru.taynov.share.repository.FileRepository
 import ru.taynov.share.repository.PublicationRepository
 import ru.taynov.share.service.FileService
 import ru.taynov.share.service.StorageService
-import ru.taynov.share.enums.FileExceptionCode.FILE_DOWNLOAD_LIMIT_EXCEEDED
-import ru.taynov.share.enums.FileExceptionCode.PUBLICATION_NOT_FOUND
-import ru.taynov.share.enums.FileExceptionCode.FILE_NOT_FOUND
-import ru.taynov.share.enums.FileExceptionCode.FILE_CANNOT_BE_DELETED
 import ru.taynov.share.service.ValidationService
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
+import java.util.UUID
 
 @Service
 class FileServiceImpl(
@@ -62,7 +60,7 @@ class FileServiceImpl(
         validationService.validatePublishFiles(fileIds, fileIds.size, fileDetails.link)
 
         val publishingFiles = fileIds.map { fileId ->
-           fileRepository.findByFileUuid(fileId) ?: throw FILE_NOT_FOUND.getException()
+            fileRepository.findByFileUuid(fileId) ?: throw FILE_NOT_FOUND.getException()
         }
 
         val publication = publicationRepository.save(
@@ -107,8 +105,10 @@ class FileServiceImpl(
         val downloadedFiles = publication.files.map { details ->
             val file = details.uploadedFileId ?: throw FILE_NOT_FOUND.getException()
             val downloadsLeft = if (details.downloadsLimit != 0) {
-                 details.downloadsLimit - details.downloadsCount
-            } else { null }
+                details.downloadsLimit - details.downloadsCount
+            } else {
+                null
+            }
             DownloadedFilesGen(
                 id = file.fileUuid,
                 fileName = file.fileName,
@@ -125,12 +125,7 @@ class FileServiceImpl(
         )
     }
 
-    override fun getFilename(id: UUID): String {
-        val file = fileRepository.findByFileUuid(id) ?: throw FILE_NOT_FOUND.getException()
-        return file.fileName
-    }
-
-    override fun getFileResource(id: UUID, password: String?): Resource {
+    override fun getFileUrl(id: UUID, password: String?): String {
         val fileDetails = fileDetailsRepository.findByFileId(id) ?: throw FILE_NOT_FOUND.getException()
         if (fileDetails.publication != null) {
             validationService.validatePassword(fileDetails.publication?.password, password)
@@ -138,7 +133,10 @@ class FileServiceImpl(
         if (fileDetails.downloadsLimit != 0 && fileDetails.downloadsCount >= fileDetails.downloadsLimit) {
             throw FILE_DOWNLOAD_LIMIT_EXCEEDED.getException()
         }
+
         fileDetailsRepository.save(fileDetails.copy(downloadsCount = fileDetails.downloadsCount + 1))
-        return InputStreamResource(storageService.getFile(id))
+
+        val filename = fileRepository.findByFileUuid(id)?.fileName ?: throw FILE_NOT_FOUND.getException()
+        return storageService.getFileUrl(id, filename) ?: throw FILE_NOT_FOUND.getException()
     }
 }

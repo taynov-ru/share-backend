@@ -8,4 +8,5 @@ class MinioConfigProperties(
     val username: String,
     val password: String,
     val bucket: String,
+    val presignedUrlExpiry: Int,
 )

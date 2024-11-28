@@ -27,3 +27,4 @@ minio:
   url: http://localhost:9000
   username: minio
   password: minio_pass
+  presignedUrlExpiry: 10

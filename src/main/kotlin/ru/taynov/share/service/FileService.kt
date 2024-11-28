@@ -1,12 +1,11 @@
 package ru.taynov.share.service
 
-import java.util.UUID
-import org.springframework.core.io.Resource
 import org.springframework.web.multipart.MultipartFile
 import ru.taynov.openapi.model.FilePublishRequestGen
 import ru.taynov.openapi.model.FilePublishResponseDataGen
 import ru.taynov.openapi.model.GetPublicationResponseDataGen
 import ru.taynov.share.dto.UploadedFileResponse
+import java.util.*
 
 interface FileService {
 
@@ -20,7 +19,5 @@ interface FileService {
 
     fun getPublication(downloadLink: String, password: String?): GetPublicationResponseDataGen
 
-    fun getFilename(id: UUID): String
-
-    fun getFileResource(id: UUID, password: String?): Resource
+    fun getFileUrl(id: UUID, password: String?): String
 }

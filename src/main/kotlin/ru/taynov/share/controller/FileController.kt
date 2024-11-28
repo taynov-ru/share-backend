@@ -1,10 +1,9 @@
 package ru.taynov.share.controller
 
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
-import java.util.UUID
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -15,11 +14,7 @@ import ru.taynov.openapi.model.FilePublishResponseDataGen
 import ru.taynov.openapi.model.GetPublicationResponseDataGen
 import ru.taynov.share.dto.UploadedFileResponse
 import ru.taynov.share.service.FileService
-import org.springframework.core.io.Resource
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestHeader
+import java.util.*
 
 @RestController
 @RequestMapping("/api/v1")
@@ -49,15 +44,10 @@ class FileController(
         return ResponseEntity.ok(fileService.getPublication(downloadLink, password))
     }
 
-    @GetMapping("/files", produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
-    fun downloadFile(
-        @RequestParam id: UUID,
-        @RequestHeader(required = false) password: String?
-    ): ResponseEntity<Resource> {
-        return ResponseEntity.ok()
-            .header(
-                HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + URLEncoder.encode(
-                fileService.getFilename(id), StandardCharsets.UTF_8))
-            .body(fileService.getFileResource(id, password))
+    @GetMapping("/file/url")
+    fun getFileUrl(
+        @RequestParam id: UUID, @RequestHeader(required = false) password: String?
+    ): ResponseEntity<String> {
+        return ResponseEntity.ok().body(fileService.getFileUrl(id, password))
     }
 }

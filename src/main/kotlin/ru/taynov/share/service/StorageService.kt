@@ -11,6 +11,8 @@ interface StorageService {
 
     fun getFile(id: UUID): InputStream
 
+    fun getFileUrl(id: UUID, filename: String): String?
+
     fun deleteFile(id: UUID)
 
     fun getFileUploadDate(id: UUID): ZonedDateTime
