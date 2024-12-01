@@ -1,5 +1,6 @@
 package ru.taynov.share.service.impl
 
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import ru.taynov.openapi.model.DownloadedFilesGen
@@ -33,6 +34,7 @@ class FileServiceImpl(
     private val validationService: ValidationService
 ) : FileService {
 
+    @Transactional
     override fun uploadFile(file: MultipartFile): UploadedFileResponse {
         validationService.validateFileSize(file.size)
         val uploadedFile = fileRepository.save(
@@ -45,6 +47,7 @@ class FileServiceImpl(
         return UploadedFileResponse(uploadedFile.fileUuid, uploadedFile.fileName)
     }
 
+    @Transactional
     override fun deleteFile(id: UUID) {
         val file = fileRepository.findByFileUuid(id) ?: throw FILE_NOT_FOUND.getException()
         val fileDetails = fileDetailsRepository.findByFileId(id)
@@ -53,6 +56,7 @@ class FileServiceImpl(
         fileRepository.save(file.copy(deleted = true))
     }
 
+    @Transactional
     override fun publishFile(filePublishRequest: FilePublishRequestGen): FilePublishResponseDataGen {
         val publishDate = ZonedDateTime.now()
         val fileIds = filePublishRequest.fileIds
@@ -87,6 +91,7 @@ class FileServiceImpl(
         )
     }
 
+    @Transactional
     override fun deletePublication(id: UUID) {
         val publication = publicationRepository.findById(id) ?: throw PUBLICATION_NOT_FOUND.getException()
         publication.files.forEach { fileDetails ->
@@ -97,6 +102,7 @@ class FileServiceImpl(
         publicationRepository.save(publication.copy(deleted = true))
     }
 
+    @Transactional
     override fun getPublication(downloadLink: String, password: String?): GetPublicationResponseDataGen {
         val publication = publicationRepository.findByDownloadLink(downloadLink)
             ?.takeIf { !it.deleted }
@@ -125,6 +131,7 @@ class FileServiceImpl(
         )
     }
 
+    @Transactional
     override fun getFileUrl(id: UUID, password: String?): String {
         val fileDetails = fileDetailsRepository.findByFileId(id) ?: throw FILE_NOT_FOUND.getException()
         if (fileDetails.publication != null) {
@@ -137,10 +144,6 @@ class FileServiceImpl(
         fileDetailsRepository.save(fileDetails.copy(downloadsCount = fileDetails.downloadsCount + 1))
 
         val filename = fileRepository.findByFileUuid(id)?.fileName ?: throw FILE_NOT_FOUND.getException()
-        return storageService.getFileUrl(id, filename)?.extractPath() ?: throw FILE_NOT_FOUND.getException()
-    }
-
-    private fun String.extractPath(): String {
-        return this.substringAfter("://").substringAfter("/")
+        return storageService.getFileUrl(id, filename) ?: throw FILE_NOT_FOUND.getException()
     }
 }

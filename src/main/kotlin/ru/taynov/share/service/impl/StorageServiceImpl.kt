@@ -26,7 +26,7 @@ class StorageServiceImpl(
 
     override fun saveFile(file: MultipartFile, id: UUID?) {
         runCatching {
-            minioClient.putObject(
+            val response = minioClient.putObject(
                 PutObjectArgs.builder()
                     .bucket(minioProperties.bucket)
                     .`object`(id.toString())
@@ -34,6 +34,10 @@ class StorageServiceImpl(
                     .contentType(file.contentType)
                     .build()
             )
+
+            if (response?.`object`() != id.toString()) {
+                throw RuntimeException("Cannot get object id from S3: ${id.toString()}")
+            }
         }.getOrElse { ex ->
             log.error(ex.toString(), ex)
             throw STORAGE_ERROR.getException()
