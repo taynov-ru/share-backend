@@ -30,13 +30,16 @@ spec:
               path: /actuator/health
               port: 8081
             initialDelaySeconds: 10
-            periodSeconds: 30
+            failureThreshold: 30
+            timeoutSeconds: 10
+            periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /actuator/health
               port: 8081
-            initialDelaySeconds: 10
-            periodSeconds: 30
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 10
           volumeMounts:
             - name: spring-application-config
               mountPath: /app/config
