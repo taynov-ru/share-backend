@@ -7,7 +7,12 @@ spec:
     app: share-backend-app
   ports:
     - protocol: TCP
+      name: http
       port: 80
       targetPort: 8080
+    - protocol: TCP
+      name: actuator
+      port: 81
+      targetPort: 8081
   type: NodePort
   

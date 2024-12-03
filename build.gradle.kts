@@ -46,6 +46,10 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	compileOnly ("org.openapitools:jackson-databind-nullable:0.2.1")
 	implementation("com.github.kagkarlsson:db-scheduler-spring-boot-starter:14.0.3")
+
+	implementation("io.micrometer:micrometer-core")
+	implementation("io.micrometer:micrometer-registry-prometheus")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
 }
 
 kotlin {
